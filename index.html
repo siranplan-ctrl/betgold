@@ -269,7 +269,14 @@ setInterval(() => {
   let num = Math.floor(Math.random() * 200) + 50;
   document.getElementById("online").innerText = num + " online";
 }, 2000);
-</script>
+</script function toggleBalance() {
+  let menu = document.getElementById("balanceMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+
+function fakeAction(action) {
+  alert(action + " clicked (fake)");
+}
 
 </body>
 </html>
