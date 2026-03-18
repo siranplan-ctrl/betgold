@@ -3,13 +3,38 @@
 <head>
   <title>CasinoX</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      display: flex;
-    }
+    body .balance-box {
+  position: relative;
+  background: #111827;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #1f2937;
+}
+
+.balance-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  width: 150px;
+  overflow: hidden;
+}
+
+.balance-menu p {
+  margin: 0;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.balance-menu p:hover {
+  background: #1f2937;
+}
+
+    
 
     .sidebar {
       width: 230px;
@@ -249,32 +274,3 @@ setInterval(() => {
 </body>
 </html>
 
-balance-box {
-  position: relative;
-  background: #111827;
-  padding: 10px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 1px solid #1f2937;
-}
-
-.balance-menu {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 45px;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 10px;
-  width: 150px;
-  overflow: hidden;
-}
-
-.balance-menu p {
-  margin: 0;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.balance-menu p:hover {
-  background: #1f2937;
