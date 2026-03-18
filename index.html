@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Casino X</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #111827;
+      padding: 20px;
+      height: 100vh;
+    }
+
+    .sidebar h2 {
+      color: #3b82f6;
+    }
+
+    .sidebar button {
+      width: 100%;
+      margin: 5px 0;
+    }
+
+    .main {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1f2937;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #3b82f6;
+      border: none;
+      padding: 10px;
+      color: white;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    input {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    #feed {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background: #111827;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .case {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      background: #374151;
+      text-align: center;
+      line-height: 60px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>CasinoX</h2>
+  <button onclick="show('dice')">🎲 Dice</button>
+  <button onclick="show('battle')">⚔️ Case Battle</button>
+  <p id="online"></p>
+</div>
+
+<div class="main">
+
+  <div id="login">
+    <h2>Login</h2>
+    <input id="u" placeholder="user">
+    <input id="p" type="password" placeholder="pass">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="app" style="display:none;">
+    <h2 id="welcome"></h2>
+    <p>Balance: <span id="bal"></span></p>
+
+    <!-- Dice -->
+    <div id="dice" class="card">
+      <h3>Dice</h3>
+      <input id="bet" type="number" placeholder="bet">
+      <button onclick="roll()">Roll</button>
+      <p id="diceResult"></p>
+    </div>
+
+    <!-- Case Battle -->
+    <div id="battle" class="card" style="display:none;">
+      <h3>Case Battle</h3>
+      <div id="cases"></div>
+      <button onclick="battle()">Start Battle</button>
+      <p id="battleResult"></p>
+    </div>
+
+  </div>
+</div>
+
+<div id="feed"></div>
+
+<script>
+const users = {
+  a: { p: "1", b: 1000 },
+  b: { p: "1", b: 1000 }
+};
+
+const botNames = ["Alex", "BotX", "Shadow", "Lucky", "Ghost"];
+
+let current = null;
+
+// 💾 Load saved data
+function load() {
+  let data = localStorage.getItem("casino");
+  if (data) Object.assign(users, JSON.parse(data));
+}
+
+// 💾 Save
+function save() {
+  localStorage.setItem("casino", JSON.stringify(users));
+}
+
+load();
+
+function login() {
+  let u = document.getElementById("u").value;
+  let p = document.getElementById("p").value;
+
+  if (users[u] && users[u].p === p) {
+    current = u;
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    document.getElementById("welcome").innerText = "Welcome " + u;
+    update();
+  } else {
+    alert("wrong login");
+  }
+}
+
+function update() {
+  document.getElementById("bal").innerText = users[current].b;
+  save();
+}
+
+function show(section) {
+  document.getElementById("dice").style.display = "none";
+  document.getElementById("battle").style.display = "none";
+  document.getElementById(section).style.display = "block";
+}
+
+// 🎲 Dice
+function roll() {
+  let bet = Number(document.getElementById("bet").value);
+  if (bet > users[current].b) return alert("no balance");
+
+  if (Math.random() > 0.5) {
+    users[current].b += bet;
+    resultFeed(current + " won " + bet);
+    document.getElementById("diceResult").innerText = "WIN";
+  } else {
+    users[current].b -= bet;
+    resultFeed(current + " lost " + bet);
+    document.getElementById("diceResult").innerText = "LOSE";
+  }
+
+  update();
+}
+
+// ⚔️ Case Battle
+function battle() {
+  document.getElementById("cases").innerHTML = "Opening...";
+
+  setTimeout(() => {
+    const rewards = [10, 20, 50, 100, 200];
+
+    let player = 0;
+    let bot = 0;
+    let botName = botNames[Math.floor(Math.random() * botNames.length)];
+
+    let html = "";
+
+    for (let i = 0; i < 5; i++) {
+      let p = rewards[Math.floor(Math.random() * rewards.length)];
+      let b = rewards[Math.floor(Math.random() * rewards.length)];
+
+      player += p;
+      bot += b;
+
+      html += `<div class="case">${p}</div>`;
+    }
+
+    document.getElementById("cases").innerHTML = html;
+
+    let result = `You: ${player} | ${botName}: ${bot}`;
+
+    if (player > bot) {
+      users[current].b += 100;
+      result += " → WIN";
+      resultFeed(current + " beat " + botName);
+    } else if (player < bot) {
+      users[current].b -= 50;
+      result += " → LOSE";
+      resultFeed(botName + " beat " + current);
+    } else {
+      result += " → DRAW";
+    }
+
+    document.getElementById("battleResult").innerText = result;
+    update();
+  }, 1000);
+}
+
+// 📊 Fake feed
+function resultFeed(text) {
+  let div = document.createElement("div");
+  div.innerText = text;
+  document.getElementById("feed").prepend(div);
+}
+
+// 🤖 Fake activity
+setInterval(() => {
+  let name = botNames[Math.floor(Math.random() * botNames.length)];
+  let win = Math.floor(Math.random() * 200);
+  resultFeed(name + " won " + win);
+}, 3000);
+
+// 🌐 Online counter
+setInterval(() => {
+  let num = Math.floor(Math.random() * 300) + 50;
+  document.getElementById("online").innerText = num + " online";
+}, 2000);
+</script>
+
+</body>
+</html>
