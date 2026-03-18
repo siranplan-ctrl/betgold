@@ -114,9 +114,17 @@
   <div id="app" style="display:none;">
 
     <div class="topbar">
-      <div>Balance: <span id="bal"></span></div>
-      <div id="online"></div>
+  <div id="online"></div>
+
+  <div class="balance-box" onclick="toggleBalance()">
+    💰 <span id="bal"></span>
+    <div id="balanceMenu" class="balance-menu">
+      <p onclick="fakeAction('Deposit')">➕ Deposit</p>
+      <p onclick="fakeAction('Withdraw')">➖ Withdraw</p>
+      <p onclick="fakeAction('Profile')">👤 Profile</p>
     </div>
+  </div>
+</div>
 
     <!-- CASE BATTLES LIST -->
     <div id="battles">
